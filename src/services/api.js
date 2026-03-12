@@ -23,7 +23,7 @@ const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3333') + '/api
 const api = axios.create({
   baseURL: apiUrl,
   headers: {
-    Accept: 'application/json',
+    'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
 })
