@@ -19,42 +19,41 @@ export const useBooksStore = defineStore('books', {
     async fetchBooks() {
       this.loading = true
       try {
-        const res = await fetch(`${baseURL}${bookApi}`)
-        this.books = await res.json()
+        const res = await api.get('/books')
+        this.books = await res.data
       } catch (err) {
         this.error = err
       } finally {
         this.loading = false
       }
-    },async fetchCategories() {
+    },
+    async fetchCategories() {
       this.loading = true
       try {
-        const res = await fetch('http://localhost:3333/api/category')
-        this.categories = await res.json()
+        const res = await api.get('/category')
+        this.categories = await res.data
       } catch (err) {
         this.error = err
       } finally {
         this.loading = false
-      }  
+      }
     },
     async fetchWriters() {
       this.loading = true
       try {
-        const res = await fetch('http://localhost:3333/api/writers')
-        this.writers = await res.json()
+        const res = await api.get('/writers')
+        this.writers = await res.data
       } catch (err) {
         this.error = err
       } finally {
         this.loading = false
-      }  
-    }
-    ,
-
+      }
+    },
     async fetchBookById(id) {
       this.loading = true
       try {
-        const res = await fetch(`http://localhost:3333/api/books/${id}`)
-        const data = await res.json()
+        const res = await api.get(`/books/${id}`)
+        const data = await res.data
         this.currentBook = data
         return data
       } catch (err) {
@@ -69,22 +68,17 @@ export const useBooksStore = defineStore('books', {
       const token = localStorage.getItem('token')
 
       try {
-        const res = await fetch(`http://localhost:3333/api/books/${bookId}/comments`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            text: content,
-          }),
-        })
+        const res = await api.post(
+          `/books/${bookId}/comments`,
+          { text: content },
+          { headers: { Authorization: `Bearer ${token}` } },
+        )
 
         // if (!res.ok) {
         //   throw new Error('Erreur lors de la sauvegarde du Commentaire')
         // }
 
-        const newCommentData = await res.json()
+        const newCommentData = await res.data
 
         if (this.currentBook && this.currentBook.id == bookId) {
           if (!this.currentBook.comments) {
@@ -108,29 +102,24 @@ export const useBooksStore = defineStore('books', {
       const token = localStorage.getItem('token')
 
       try {
-        const res = await fetch(`http://localhost:3333/api/books/${bookId}/rate`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({ star }),
-        })
+        const res = await api.post(
+          `/books/${bookId}/rate`,
+          { star },
+          { headers: { Authorization: `Bearer ${token}` } },
+        )
 
         if (!res.ok) {
           throw new Error("Erreur lors de l'enregistrement de la note")
         }
 
-        const ratingData = await res.json()
+        const ratingData = await res.data
 
         if (this.currentBook && this.currentBook.id == bookId) {
           if (!this.currentBook.evaluate) {
             this.currentBook.evaluate = []
           }
 
-          const existing = this.currentBook.evaluate.find(
-            (e) => e.userId === ratingData.userId
-          )
+          const existing = this.currentBook.evaluate.find((e) => e.userId === ratingData.userId)
 
           if (existing) {
             existing.star = ratingData.star

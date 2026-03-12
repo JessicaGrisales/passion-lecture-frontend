@@ -9,11 +9,14 @@ const booksStore = useBooksStore()
 
 // Charger les livres de l'utilisateur connecté
 onMounted(async () => {
-  const response = await axios.get('http://localhost:3333/api/my-books', {
-    headers: {
-      Authorization: `Bearer ${auth.token}`
-    }
-  })
+  const response = await axios.get(
+    'https://api-backend-jesdiofra-d9e4fbfcg0czcugz.switzerlandnorth-01.azurewebsites.net/api/my-books',
+    {
+      headers: {
+        Authorization: `Bearer ${auth.token}`,
+      },
+    },
+  )
 
   // On remplit le store avec les livres récupérés
   booksStore.books = response.data
@@ -60,7 +63,9 @@ ul {
   margin-bottom: 12px;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .bookContainer:hover {
@@ -94,7 +99,9 @@ ul {
   border: none;
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.2s ease, transform 0.1s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
 }
 
 #modify-btn {
