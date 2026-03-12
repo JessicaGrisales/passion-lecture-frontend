@@ -1,0 +1,8 @@
+.main-header, .main-footer {
+  background: #eee;
+  padding: 1rem;
+}
+
+.main-header nav a {
+  margin-right: 1rem;
+}
