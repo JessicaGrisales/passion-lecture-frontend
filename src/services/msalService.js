@@ -22,7 +22,7 @@ const msalConfig = {
   auth: {
     clientId: "2cce9efa-0b90-4413-931d-279166fada18",
     authority: "https://login.microsoftonline.com/906ab908-04f9-4a80-ba9c-875a36e77bc1",
-    // Remplace window.location.origin par l'URL exacte citée dans l'erreur :
+    // Remplace window.location.origin par l'URL EXACTE mentionnée dans l'erreur :
     redirectUri: "https://yellow-sea-037043503.2.azurestaticapps.net", 
   },
   cache: {
