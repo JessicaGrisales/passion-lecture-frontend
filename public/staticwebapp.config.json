@@ -1,0 +1,16 @@
+{
+  "auth": {
+    "identityProviders": {
+      "azureActiveDirectory": {
+        "registration": {
+          "openIdConnectConfiguration": {
+            "wellKnownConfigUrl": "https://login.microsoftonline.com/906ab908-04f9-4a80-ba9c-875a36e77bc1/v2.0/.well-known/openid-configuration"
+          }
+        }
+      }
+    }
+  },
+  "navigationFallback": {
+    "rewrite": "/index.html"
+  }
+}
