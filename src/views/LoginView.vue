@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import AuthServices from '@/services/AuthServices.js'
-import { loginWithMicrosoft } from '@/services/msalService'
 
 const router = useRouter()
 const auth = useAuthStore()
