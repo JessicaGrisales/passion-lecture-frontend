@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import AuthServices from '@/services/AuthServices.js'
+import { loginWithMicrosoft } from '@/services/msalService'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -36,26 +37,21 @@ const handleLogin = () => {
     })
 }
 
-// --- FONCTION 2 : CONNEXION MICROSOFT ---
-/*const handleMSALClick = async () => {
+const handleMSALClick = async () => {
   try {
-    const user = await loginWithMicrosoft();
+    const account = await loginWithMicrosoft();
     
-    // On simule une connexion dans Pinia
-    const msalUser = { username: user.name, email: user.username };
-    auth.login(msalUser, "MSAL_TOKEN");
-    
-    alert("Connecté en tant que : " + user.name);
+    // On met à jour Pinia avec les vraies données reçues de MSAL
+    auth.login({ 
+      username: account.name, 
+      email: account.username 
+    }, account.homeAccountId);
+
+    alert("Bienvenue " + account.name);
     router.push('/');
   } catch (err) {
-    console.error("Erreur dans handleMSALClick:", err);
     errorMessage.value = "La connexion Microsoft a échoué.";
   }
-}*/
-const handleMSALClick = () => {
-  // Cette route est gérée automatiquement par Azure Static Web Apps
-  // Elle utilise les infos (Tenant, Client ID, Secret) configurées côté serveur
-  window.location.href = "/.auth/login/aad";
 };
 </script>
 

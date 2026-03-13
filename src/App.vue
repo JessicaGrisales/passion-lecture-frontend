@@ -3,39 +3,40 @@ import { onMounted } from 'vue'
 import HeaderComponent from './components/HeaderComponent.vue';
 import FooterComponent from './components/FooterComponent.vue';
 import { useAuthStore } from '@/stores/auth'
+import { msalInstance } from '@/services/msalService' // On importe l'instance MSAL
 
 const auth = useAuthStore()
 
-// 1. Fonction pour détecter la connexion MSAL d'Azure
-const checkAzureUser = async () => {
+// 1. Vérifier si un compte est déjà connecté dans MSAL
+const checkMsalAccount = async () => {
   try {
-    // On appelle la route magique d'Azure
-    const response = await fetch('/.auth/me')
-    const payload = await response.json()
-    const { clientPrincipal } = payload
+    // Indispensable en MSAL 3.0 : initialiser avant d'interroger les comptes
+    await msalInstance.initialize();
 
-    // Si Azure confirme qu'on est connecté via Microsoft
-    if (clientPrincipal) {
-      console.log("Connecté via Azure MSAL:", clientPrincipal.userDetails)
-      
-      // On met à jour le store Pinia avec les infos d'Azure
-      auth.login({ 
-        username: clientPrincipal.userDetails, // C'est souvent l'email
-        provider: clientPrincipal.identityProvider 
-      }, "AZURE_MSAL_TOKEN")
+    // Regarder si MSAL a des comptes en mémoire (localStorage)
+    const accounts = msalInstance.getAllAccounts();
+
+    if (accounts.length > 0) {
+      const account = accounts[0]; // On prend le premier compte trouvé
+      console.log("Compte MSAL détecté au démarrage :", account.name);
+
+      // On connecte Pinia avec les infos MSAL
+      auth.login({
+        username: account.name,
+        email: account.username
+      }, account.homeAccountId);
     }
   } catch (error) {
-    // En local, cette erreur est normale car /.auth/me n'existe pas
-    console.log("Pas de session Azure détectée (normal en local)")
+    console.error("Erreur lors de la vérification du compte MSAL :", error);
   }
 }
 
 onMounted(async () => {
-  // A. On charge d'abord les infos du localStorage (ta méthode actuelle)
+  // A. On charge les infos locales habituelles
   auth.loadFromLocalStorage()
 
-  // B. On vérifie SI on vient de se connecter via Microsoft
-  await checkAzureUser()
+  // B. On vérifie la session MSAL (si l'utilisateur revient après un refresh)
+  await checkMsalAccount()
 })
 </script>
 
@@ -50,12 +51,7 @@ onMounted(async () => {
 <style>
 #layout {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-h2 {
-  font-size: 20px;
 }
 </style>
