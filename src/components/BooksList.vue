@@ -18,7 +18,7 @@ onMounted(async () => {
     },
   )
 
-  // On remplit le store avec les livres récupérés
+  // On remplit le store avec les livres récupérés ghthth
   booksStore.books = response.data
 })
 
